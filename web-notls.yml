@@ -1,0 +1,14 @@
+- name: Konfiguracja serwera
+  hosts: webservers
+  become: True
+  tasks:
+    - name: Instalacja nginx
+      apt: name=nginx update_cache=yes
+    - name: Kopiowanie pliku konfiguracyjnego Nginx
+      copy: src=files/nginx.conf dest=/etc/nginx/sites-available/default
+    - name: Konfiguracja
+      file: dest=/etc/nginx/sites-enabled/default src=/etc/nginx/sites-available/default state=link
+    - name: Kopiowanie index.html
+      copy: src=files/index.html.j2 dest=/usr/share/nginx/html/index.html mode=0644
+    - name: Restart nginx
+      service: name=nginx state=restarted
